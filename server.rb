@@ -1,6 +1,7 @@
 require 'base'
+require 'app/controllers/introspection_controller'
 
-class Introspection < Mongrel::HttpHandler
+class APPHandler < Mongrel::HttpHandler
   def process(request, response)
     response.start(200) do |head,out|
       body = <<XML
@@ -157,7 +158,6 @@ XML
 end
 
 h = Mongrel::HttpServer.new("0.0.0.0", 3000)
-h.register("/introspection", Introspection.new)
-h.register("/entry", Entry.new)
+h.register("/", APPHandler.new)
 puts "loaded"
 h.run.join
