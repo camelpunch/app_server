@@ -1,19 +1,23 @@
 require 'ostruct'
+require 'entry'
 
 class Response < OpenStruct
 end
 
-class IntrospectionController
-
-  attr_accessor :response
-
+class Controller
+  
   def initialize
     self.response = Response.new(:status => 200)
   end
 
+end
+
+class IntrospectionController < Controller
+
+  attr_accessor :response
+
   def show
     <<XML
-<?xml version="1.0" encoding="utf-8"?>
 <service xmlns="http://www.w3.org/2007/app" xmlns:atom="http://www.w3.org/2005/Atom">
   <workspace>
     <atom:title>AtomPub Test Site</atom:title>

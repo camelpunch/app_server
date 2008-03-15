@@ -1,14 +1,18 @@
 require 'test/unit'
-require 'rubygems'
-require 'active_support'
+require 'lib/base'
+Server.environment = 'test'
+require 'lib/xml'
 
 module ControllerAssertions
 
-  def controller
-    controller_name = self.class.to_s.gsub(/Test$/, '')
+  def setup
+    @controller_name = self.class.to_s.gsub(/Test$/, '')
     require File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 
-                      controller_name.underscore)
-    Kernel.const_get(controller_name).new
+                      @controller_name.underscore)
+  end
+
+  def controller
+    Kernel.const_get(@controller_name).new
   end
 
   def get(action_name)
@@ -24,4 +28,13 @@ module ControllerAssertions
 
 end
 
+module ModelAssertions
+
+  def setup
+    model_name = self.class.to_s.gsub(/Test$/, '')
+    require File.join(File.dirname(__FILE__), '..', 'app', 'models', 
+                      model_name.underscore)
+  end
+
+end
 

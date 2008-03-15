@@ -22,7 +22,7 @@ class Xml
   end
 
   # set up environment
-  ENV_DIR = Java::File.new(File.join(File.dirname(__FILE__), 'db', AppServer.environment))
+  ENV_DIR = Java::File.new(File.join(Server.root, 'db', Server.environment))
   env_config = Java::EnvironmentConfig.new
   env_config.set_allow_create true
   env_config.set_initialize_cache true
