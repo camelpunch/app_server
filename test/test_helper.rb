@@ -11,18 +11,21 @@ module ControllerAssertions
                       @controller_name.underscore)
   end
 
-  def controller
+  def new_controller
     Kernel.const_get(@controller_name).new
   end
 
   def get(action_name)
-    @body = controller.send(action_name)
+    @controller = new_controller
+    @controller.action_name = action_name
+    @body = @controller.send(action_name)
   end
 
   def assert_response(type, message = nil)
     case type
     when :success
-      assert_equal 200, controller.response.status
+      assert_equal 200, @controller.response.status, 
+      "Expected response #{type} but got #{@controller.response.status}"
     end
   end
 

@@ -85,7 +85,7 @@ class Xml
   def self.query(query_content, args = {})
     context = manager.create_query_context
 
-    context.set_base_uri("file://#{Merb.root}/")
+    context.set_base_uri("file://#{Server.root}/")
 
     variables = args[:variables]
     output = ''
@@ -105,9 +105,9 @@ class Xml
     container_transaction do |txn, container|
       expression = manager.prepare txn, query_content, context
 
-      if Merb.environment == 'development'
-        Merb.logger.info("\n\n------------------ Query plan -----------------\n")
-        Merb.logger.info(expression.get_query_plan)
+      if Server.environment == 'development'
+        #Merb.logger.info("\n\n------------------ Query plan -----------------\n")
+        #Merb.logger.info(expression.get_query_plan)
       end
 
       results = expression.execute context

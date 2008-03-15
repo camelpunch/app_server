@@ -10,7 +10,9 @@ class Handler < Mongrel::HttpHandler
 
       content = case request.params['REQUEST_PATH']
       when '/introspection'
-        IntrospectionController.new.show
+        controller = IntrospectionController.new
+        controller.action_name = 'show'
+        controller.show
       end
 
       body = <<XML

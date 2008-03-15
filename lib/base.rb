@@ -9,3 +9,5 @@ module Server
 end
 
 $: << File.join(Server.root, 'app', 'models')
+
+require 'lib/controller'
