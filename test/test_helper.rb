@@ -28,14 +28,6 @@ end
 
 module ControllerTest
 
-  def controller_name
-    @controller_name ||= self.class.to_s.gsub(/Test$/, '')
-  end
-
-  def new_controller
-    Kernel.const_get(controller_name).new
-  end
-
   def get(path)
     fake_request = FakeRequest.new(path)
     @controller = fake_request.handler.route.controller
