@@ -34,7 +34,7 @@ class Handler < Mongrel::HttpHandler
     self.route = Route.new request.params['REQUEST_PATH']
 
     response.start(self.route.controller.response.status) do |head, out|
-      puts request.params.inspect
+      # puts request.params.inspect
 
       body = <<XML
 <?xml version="1.0" encoding="utf-8"?>
