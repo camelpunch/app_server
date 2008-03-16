@@ -2,6 +2,7 @@ require 'test/unit'
 require 'lib/base'
 Server.environment = 'test'
 require 'lib/xml'
+require 'entry'
 
 require Server.root + '/server'
 
@@ -13,32 +14,26 @@ class Test::Unit::TestCase
 
     File.read path
   end
-end
 
-class FakeRequest
+  def load_fixture(container, name)
+    klass = Kernel.const_get(container.to_s.singularize.classify)
+    klass.destroy name.to_s
 
-  attr_accessor :handler, :request, :response
+    filename = name.split('/').last
 
-  def initialize(path)
-    self.handler = Handler.new
-
-    self.request = OpenStruct.new :params => {'REQUEST_PATH' => path}
-    self.response = TestResponse.new
-
-    handler.process request, response
+    content = fixture "#{container}/#{filename}"
+    klass.create :name => name, :content => content
   end
 end
 
-module ControllerAssertions
+module ControllerTest
 
-  def setup
-    @controller_name = self.class.to_s.gsub(/Test$/, '')
-    require File.join(File.dirname(__FILE__), '..', 'app', 'controllers', 
-                      @controller_name.underscore)
+  def controller_name
+    @controller_name ||= self.class.to_s.gsub(/Test$/, '')
   end
 
   def new_controller
-    Kernel.const_get(@controller_name).new
+    Kernel.const_get(controller_name).new
   end
 
   def get(path)
@@ -57,14 +52,18 @@ module ControllerAssertions
 
 end
 
-module ModelAssertions
+class FakeRequest
 
-  def setup
-    model_name = self.class.to_s.gsub(/Test$/, '')
-    require File.join(File.dirname(__FILE__), '..', 'app', 'models', 
-                      model_name.underscore)
+  attr_accessor :handler, :request, :response
+
+  def initialize(path)
+    self.handler = Handler.new
+
+    self.request = OpenStruct.new :params => {'REQUEST_PATH' => path}
+    self.response = TestResponse.new
+
+    handler.process request, response
   end
-
 end
 
 class TestOutputter

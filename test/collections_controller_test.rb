@@ -1,8 +1,7 @@
 require File.dirname(__FILE__) + '/test_helper'
-require 'collection'
 
 class CollectionsControllerTest < Test::Unit::TestCase
-  include ControllerAssertions
+  include ControllerTest
   
   def test_get
     Collection.destroy('blog')

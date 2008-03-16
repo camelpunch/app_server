@@ -1,19 +1,7 @@
 require File.dirname(__FILE__) + '/test_helper'
-require 'collection'
-require 'entry'
 
 class EntriesControllerTest < Test::Unit::TestCase
-  include ControllerAssertions
-
-  def load_fixture(container, name)
-    klass = Kernel.const_get(container.to_s.singularize.classify)
-    klass.destroy name.to_s
-
-    filename = name.split('/').last
-
-    content = fixture "#{container}/#{filename}"
-    klass.create :name => name, :content => content
-  end
+  include ControllerTest
 
   def assert_include(text)
     assert @body.include?(text), "Expected #{text} to be in:\n #{@body}"
