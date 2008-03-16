@@ -1,3 +1,5 @@
+#!/usr/bin/env jruby
+
 require 'lib/base'
 Server.environment = 'development'
 require 'lib/xml' # must be after env is set!
