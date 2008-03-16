@@ -1,0 +1,20 @@
+<entry 
+  xmlns="http://www.w3.org/2005/Atom"
+  xmlns:app="http://www.w3.org/2007/app">
+  <title>first post</title>
+  <link rel="self" href="/blog/first_post"/>
+  <link href="/blog/first_post.atom" rel="edit"/>
+  <link href="/blog/first_post/media.atom" rel="edit-media"/>
+  <id>http://www.andrewbruce.net/blog/first_post</id>
+  <updated>2008-02-28T09:57:08.303337-04:00</updated>
+  <app:edited>2008-02-28T09:57:08.303337-04:00</app:edited>
+  <summary type="xhtml">
+    <div xmlns="http://www.w3.org/1999/xhtml"/>
+  </summary>
+  <content type="xhtml">
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <h1>First Post!</h1>
+      <p>LOL!</p>
+    </div>
+  </content>
+</entry>

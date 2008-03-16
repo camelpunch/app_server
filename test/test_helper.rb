@@ -3,6 +3,32 @@ require 'lib/base'
 Server.environment = 'test'
 require 'lib/xml'
 
+require Server.root + '/server'
+
+class Test::Unit::TestCase
+  def fixture(simple_path)
+    dir, name = simple_path.split '/'
+
+    path = File.join(Server.root, 'test', 'fixtures', dir, "#{name}.xml")
+
+    File.read path
+  end
+end
+
+class FakeRequest
+
+  attr_accessor :handler, :request, :response
+
+  def initialize(path)
+    self.handler = Handler.new
+
+    self.request = OpenStruct.new :params => {'REQUEST_PATH' => path}
+    self.response = TestResponse.new
+
+    handler.process request, response
+  end
+end
+
 module ControllerAssertions
 
   def setup
@@ -15,10 +41,10 @@ module ControllerAssertions
     Kernel.const_get(@controller_name).new
   end
 
-  def get(action_name)
-    @controller = new_controller
-    @controller.action_name = action_name
-    @body = @controller.send(action_name)
+  def get(path)
+    fake_request = FakeRequest.new(path)
+    @controller = fake_request.handler.route.controller
+    @body = @controller.response.body
   end
 
   def assert_response(type, message = nil)
@@ -39,5 +65,23 @@ module ModelAssertions
                       model_name.underscore)
   end
 
+end
+
+class TestOutputter
+  attr_accessor :output
+
+  def write(output)
+    self.output = output
+  end
+end
+
+class TestResponse < OpenStruct
+  attr_accessor :outputter
+
+  def start(status)
+    head = {}
+    self.outputter = TestOutputter.new
+    yield head, self.outputter
+  end
 end
 

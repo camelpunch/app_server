@@ -1,6 +1,6 @@
-class IntrospectionController < Controller
+class CollectionsController < Controller
 
-  def show
+  def index
     Xml.open_container 'collections'
     render
   end

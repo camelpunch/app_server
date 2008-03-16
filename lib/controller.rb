@@ -5,20 +5,32 @@ end
 
 class Controller
   
-  attr_accessor :response, :action_name
+  attr_accessor :response, :action_name, :path
 
   def initialize
     self.response = Response.new(:status => 200)
   end
 
-  def render
+  def template_path(content_type)
     controller_name = self.class.to_s.gsub(/Controller$/, '').underscore
-    template_filename = "#{action_name}.atomserv.xq"
+    template_filename = "#{action_name}.#{content_type}.xq"
 
-    template_path = File.join(Server.root, 'app', 'views', controller_name,
-                              template_filename)
+    File.join(Server.root, 'app', 'views', controller_name, template_filename)
+  end
 
-    Xml.query(File.read(template_path))
+  def render
+    
+    begin
+      query_source = File.read template_path(:atomserv)
+    rescue Errno::ENOENT
+      query_source = File.read template_path(:atom)
+    end
+
+    options = {
+      :variables => {:path => path}
+    }
+
+    Xml.query query_source, options
   end
 
 end

@@ -1,0 +1,20 @@
+<entry 
+  xmlns="http://www.w3.org/2005/Atom"
+  xmlns:app="http://www.w3.org/2007/app">
+  <title>Some Code Entry</title>
+  <link rel="self" href="/code/code_entry"/>
+  <link href="/code/code_entry.atom" rel="edit"/>
+  <link href="/code/code_entry/media.atom" rel="edit-media"/>
+  <id>http://www.andrewbruce.net/code/code_entry</id>
+  <updated>2008-02-28T09:57:08.303337-04:00</updated>
+  <app:edited>2008-02-28T09:57:08.303337-04:00</app:edited>
+  <summary type="xhtml">
+    <div xmlns="http://www.w3.org/1999/xhtml"/>
+  </summary>
+  <content type="xhtml">
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <h1>Code Entry</h1>
+      <p>Some code!</p>
+    </div>
+  </content>
+</entry>
