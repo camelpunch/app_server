@@ -9,22 +9,24 @@ Rake::TestTask.new("tests") do |t|
   t.pattern = "test/*_test.rb"
 end
 
-desc "Load XML from fixtures"
-task :load do
+task :clear_database do
   FileUtils.rm_rf("db/development")
   Dir.mkdir("db/development")
   load 'app/models/collection.rb'
   load 'app/models/entry.rb'
+end
 
-  Dir.glob("test/fixtures/collections/*.xml") do |filename|
-    collection_name = File.basename(filename).gsub(/\.xml$/, '')
-    Collection.create(:name => collection_name,
-                      :content => File.read(filename))
+def load_container(name)
+  Dir.glob("test/fixtures/#{name}/*.xml") do |filename|
+    doc_name = File.basename(filename).gsub(/\.xml$/, '')
+    Kernel.const_get(name.to_s.singularize.classify).
+      create(:name => doc_name,
+             :content => File.read(filename))
   end
+end
 
-  Dir.glob("test/fixtures/entries/*.xml") do |filename|
-    entry_name = File.basename(filename).gsub(/\.xml$/, '')
-    Entry.create(:name => entry_name,
-                 :content => File.read(filename))
-  end
+desc "Load XML from fixtures"
+task :load => :clear_database do
+  load_container :collections
+  load_container :entries  
 end
