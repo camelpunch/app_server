@@ -2,9 +2,20 @@ require 'test/unit'
 require 'lib/base'
 Server.environment = 'test'
 require 'lib/xml'
+
+require 'collection'
 require 'entry'
 
 require Server.root + '/server'
+
+CompactSchemaReader = com.thaiopensource.validate.rng.CompactSchemaReader
+ValidationDriver = com.thaiopensource.validate.ValidationDriver
+StringReader = java.io.StringReader
+StringWriter = java.io.StringWriter
+InputSource = org.xml.sax.InputSource
+ErrorHandlerImpl = com.thaiopensource.xml.sax.ErrorHandlerImpl
+PropertyMapBuilder = com.thaiopensource.util.PropertyMapBuilder
+ValidateProperty = com.thaiopensource.validate.ValidateProperty
 
 class Test::Unit::TestCase
   def fixture(simple_path)
@@ -24,6 +35,30 @@ class Test::Unit::TestCase
     content = fixture "#{container}/#{filename}"
     klass.create :name => name, :content => content
   end
+
+  # adapted from
+  # https://ape.dev.java.net/source/browse/ape/src/validator.rb?rev=1.2&view=markup
+  def assert_valid(schema_type, text)
+    case schema_type
+    when :app
+      schema = File.read '/home/andrew/dev/app_server/lib/app.rnc'
+    end
+
+    schema_error = StringWriter.new
+    error_handler = ErrorHandlerImpl.new(schema_error)
+    properties = PropertyMapBuilder.new
+    properties.put ValidateProperty::ERROR_HANDLER, error_handler
+    error = nil
+    driver = ValidationDriver.new(properties.to_property_map,
+                                  CompactSchemaReader.get_instance)
+
+    if driver.load_schema(InputSource.new(StringReader.new(schema)))
+      assert driver.validate(InputSource.new(StringReader.new(text))),
+        schema_error.to_string
+    else
+      raise RuntimeError, "couldn't load schema"
+    end
+  end
 end
 
 module ControllerTest
@@ -40,6 +75,14 @@ module ControllerTest
       assert_equal 200, @controller.response.status, 
       "Expected response #{type} but got #{@controller.response.status}"
     end
+  end
+
+  def assert_include(text)
+    assert @body.include?(text), "Expected #{text} to be in:\n #{@body}"
+  end
+
+  def assert_not_include(text)
+    assert ! @body.include?(text), "Expected #{text} to not be in:\n #{@body}"
   end
 
 end
