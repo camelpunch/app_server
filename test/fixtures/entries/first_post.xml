@@ -2,6 +2,7 @@
   xmlns="http://www.w3.org/2005/Atom"
   xmlns:app="http://www.w3.org/2007/app">
   <title>first post</title>
+  <author><name>Andrew Bruce</name></author>
   <link rel="self" href="/blog/first_post"/>
   <link href="/blog/first_post.atom" rel="edit"/>
   <link href="/blog/first_post/media.atom" rel="edit-media"/>

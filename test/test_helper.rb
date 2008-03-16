@@ -8,21 +8,19 @@ require 'entry'
 
 require Server.root + '/server'
 
-CompactSchemaReader = com.thaiopensource.validate.rng.CompactSchemaReader
-ValidationDriver = com.thaiopensource.validate.ValidationDriver
-StringReader = java.io.StringReader
-StringWriter = java.io.StringWriter
-InputSource = org.xml.sax.InputSource
-ErrorHandlerImpl = com.thaiopensource.xml.sax.ErrorHandlerImpl
-PropertyMapBuilder = com.thaiopensource.util.PropertyMapBuilder
-ValidateProperty = com.thaiopensource.validate.ValidateProperty
+include_class com.thaiopensource.validate.rng.CompactSchemaReader
+include_class com.thaiopensource.validate.ValidationDriver
+include_class java.io.StringReader
+include_class java.io.StringWriter
+include_class org.xml.sax.InputSource
+include_class com.thaiopensource.xml.sax.ErrorHandlerImpl
+include_class com.thaiopensource.util.PropertyMapBuilder
+include_class com.thaiopensource.validate.ValidateProperty
 
 class Test::Unit::TestCase
   def fixture(simple_path)
     dir, name = simple_path.split '/'
-
     path = File.join(Server.root, 'test', 'fixtures', dir, "#{name}.xml")
-
     File.read path
   end
 
@@ -39,10 +37,7 @@ class Test::Unit::TestCase
   # adapted from
   # https://ape.dev.java.net/source/browse/ape/src/validator.rb?rev=1.2&view=markup
   def assert_valid(schema_type, text)
-    case schema_type
-    when :app
-      schema = File.read '/home/andrew/dev/app_server/lib/app.rnc'
-    end
+    schema = File.read File.join(Server.root, 'schema', "#{schema_type}.rnc")
 
     schema_error = StringWriter.new
     error_handler = ErrorHandlerImpl.new(schema_error)
@@ -54,7 +49,7 @@ class Test::Unit::TestCase
 
     if driver.load_schema(InputSource.new(StringReader.new(schema)))
       assert driver.validate(InputSource.new(StringReader.new(text))),
-        schema_error.to_string
+        "#{schema_error.to_string}\n\n#{text}"
     else
       raise RuntimeError, "couldn't load schema"
     end
@@ -88,13 +83,15 @@ module ControllerTest
 end
 
 class FakeRequest
-
   attr_accessor :handler, :request, :response
 
   def initialize(path)
     self.handler = Handler.new
 
-    self.request = OpenStruct.new :params => {'REQUEST_PATH' => path}
+    self.request = OpenStruct.new :params => {
+      'HTTP_HOST' => 'test.host',
+      'REQUEST_PATH' => path,
+    }
     self.response = TestResponse.new
 
     handler.process request, response

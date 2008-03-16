@@ -17,9 +17,9 @@ class EntriesControllerTest < Test::Unit::TestCase
     assert_include 'LOL'
     assert_not_include 'Some Code Entry'
 
-    assert_include '<id'
+    assert_include "http://test.host#{@controller.path}"
 
-    assert_valid :app, @body
+    assert_valid :atom, @body
   end
 
 end

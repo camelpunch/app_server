@@ -12,7 +12,10 @@ require 'app/controllers/entries_controller'
 class Route
   attr_accessor :controller
 
-  def initialize(path)
+  def initialize(request)
+    hostname = request.params['HTTP_HOST']
+    path = request.params['REQUEST_PATH']
+
     if path == '/collections'
       self.controller = CollectionsController.new
       controller.action_name = 'index'
@@ -23,6 +26,8 @@ class Route
       puts path
       puts path.count('/')
     end
+
+    controller.hostname = hostname
     controller.path = path
     controller.response.body = controller.send controller.action_name
   end
@@ -33,7 +38,7 @@ class Handler < Mongrel::HttpHandler
   attr_accessor :route
 
   def process(request, response)
-    self.route = Route.new request.params['REQUEST_PATH']
+    self.route = Route.new request
 
     response.start(self.route.controller.response.status) do |head, out|
       # puts request.params.inspect

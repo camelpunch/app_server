@@ -12,6 +12,8 @@ class CollectionsControllerTest < Test::Unit::TestCase
     assert_response :success
 
     assert @body.include?('Blog Entries'), 'no Blog Entries in body: ' + @body
+
+    assert_valid :app, @body
   end
 
 end

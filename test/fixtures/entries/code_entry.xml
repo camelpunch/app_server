@@ -2,6 +2,7 @@
   xmlns="http://www.w3.org/2005/Atom"
   xmlns:app="http://www.w3.org/2007/app">
   <title>Some Code Entry</title>
+  <author><name>Andrew Bruce</name></author>
   <link rel="self" href="/code/code_entry"/>
   <link href="/code/code_entry.atom" rel="edit"/>
   <link href="/code/code_entry/media.atom" rel="edit-media"/>
