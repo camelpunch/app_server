@@ -15,4 +15,10 @@ class EntryTest < Test::Unit::TestCase
     load_fixture :entries, name
     assert_equal num_entries+1, Entry.count
   end
+
+  def test_find
+    assert_raise Entry::NotFound do
+      Entry.find 'dfgdhjrereljlt'
+    end
+  end
 end

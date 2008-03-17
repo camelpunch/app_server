@@ -1,5 +1,7 @@
 class Xml
 
+  class NotFound < RuntimeError; end
+
   # share manager and container config across all db subclasses
   cattr_accessor :manager, :container_config
   
@@ -146,6 +148,9 @@ class Xml
     end
 
     object
+
+  rescue Java::XmlException
+    raise NotFound, "Couldn't find #{self.class} #{name}"
   end
 
   # as above, returning nil in place of raising

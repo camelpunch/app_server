@@ -24,7 +24,14 @@ class EntriesControllerTest < Test::Unit::TestCase
 
   def test_post
     slug = 'a_name_for_my_post'
-    Entry.destroy slug
+    begin
+      Entry.destroy(slug)
+    rescue
+    end
+
+    assert_raise Entry::NotFound do
+      Entry.find(slug)
+    end
 
     num_entries = Entry.count
 
@@ -36,7 +43,9 @@ class EntriesControllerTest < Test::Unit::TestCase
 
     assert_response 201
 
-    assert_equal num_entries+1, Entry.count
+    assert_equal num_entries + 1, Entry.count
+
+    assert Entry.find(slug)
   end
 
 end
