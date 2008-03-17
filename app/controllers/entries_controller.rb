@@ -8,6 +8,8 @@ class EntriesController < Controller
 
   def create
     response.status = 201
+    Entry.create :name => request.params['HTTP_SLUG'], 
+                 :content => '<adsf/>'
   end
   
 end

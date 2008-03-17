@@ -7,7 +7,7 @@ class RoutingTest < Test::Unit::TestCase
     expected_controller, expected_action_name = 
       options.values_at :controller, :action
 
-    fake_request = FakeRequest.new(expected_path)
+    fake_request = FakeRequest.new(expected_path, :method => :get)
     assert fake_request.response.outputter.output
 
     assert_equal expected_controller, 

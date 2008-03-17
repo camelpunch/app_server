@@ -9,7 +9,7 @@ class CollectionsControllerTest < Test::Unit::TestCase
     Collection.create(:name => 'blog', :content => content)
 
     get '/collections'
-    assert_response :success
+    assert_response 200
 
     assert @body.include?('Blog Entries'), 'no Blog Entries in body: ' + @body
 

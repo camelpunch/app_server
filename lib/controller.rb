@@ -5,10 +5,19 @@ end
 
 class Controller
   
-  attr_accessor :response, :action_name, :hostname, :path
+  attr_accessor :request, :response, :action_name, :hostname, :path
 
-  def initialize
+  def initialize(request)
+    self.request = request
     self.response = Response.new :status => 200
+  end
+
+  def hostname
+    request.params['HTTP_HOST']
+  end
+
+  def path
+    request.params['REQUEST_PATH']
   end
 
   def template_path(content_type)

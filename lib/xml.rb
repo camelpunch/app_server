@@ -82,6 +82,10 @@ class Xml
     container 
   end
 
+  def self.count
+    open_container.get_num_documents
+  end
+
   def self.query(query_content, args = {})
     context = manager.create_query_context
 

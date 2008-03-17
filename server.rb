@@ -15,15 +15,15 @@ class Route
   attr_accessor :controller
 
   def initialize(request)
-    hostname = request.params['HTTP_HOST']
     path = request.params['REQUEST_PATH']
     method = request.params['REQUEST_METHOD']
 
     if path == '/collections'
-      self.controller = CollectionsController.new
+      self.controller = CollectionsController.new request
       controller.action_name = 'index'
+
     elsif path.count('/') == 1
-      self.controller = EntriesController.new
+      self.controller = EntriesController.new request
 
       case method
       when 'GET'
@@ -38,8 +38,6 @@ class Route
       puts path.count('/')
     end
 
-    controller.hostname = hostname
-    controller.path = path
     controller.response.body = controller.send controller.action_name
   end
 

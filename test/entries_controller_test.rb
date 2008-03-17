@@ -24,6 +24,10 @@ class EntriesControllerTest < Test::Unit::TestCase
 
   def test_post
     slug = 'a_name_for_my_post'
+    Entry.destroy slug
+
+    num_entries = Entry.count
+
     post '/blog', 
       :headers => {
         :slug => slug,
@@ -31,6 +35,8 @@ class EntriesControllerTest < Test::Unit::TestCase
       :content => fixture('requested_entries/somenewpost')
 
     assert_response 201
+
+    assert_equal num_entries+1, Entry.count
   end
 
 end
