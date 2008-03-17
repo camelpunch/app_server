@@ -9,7 +9,7 @@ class EntriesControllerTest < Test::Unit::TestCase
     load_fixture :entries, '/code/code_entry'
 
     get '/blog'
-    assert_response :success
+    assert_response 200
 
     assert_equal '/blog', @controller.path
 
@@ -20,6 +20,17 @@ class EntriesControllerTest < Test::Unit::TestCase
     assert_include "http://test.host#{@controller.path}"
 
     assert_valid :atom, @body
+  end
+
+  def test_post
+    slug = 'a_name_for_my_post'
+    post '/blog', 
+      :headers => {
+        :slug => slug,
+      },
+      :content => fixture('requested_entries/somenewpost')
+
+    assert_response 201
   end
 
 end

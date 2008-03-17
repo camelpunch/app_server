@@ -59,17 +59,20 @@ end
 module ControllerTest
 
   def get(path)
-    fake_request = FakeRequest.new(path)
+    fake_request = FakeRequest.new path, :method => :get
     @controller = fake_request.handler.route.controller
     @body = @controller.response.body
   end
 
-  def assert_response(type, message = nil)
-    case type
-    when :success
-      assert_equal 200, @controller.response.status, 
-      "Expected response #{type} but got #{@controller.response.status}"
-    end
+  def post(path, options = {})
+    options.merge! :method => :post
+    fake_request = FakeRequest.new path, options
+    @controller = fake_request
+    @body = @controller.response.body
+  end
+
+  def assert_response(code)
+    assert_equal code, @controller.response.status
   end
 
   def assert_include(text)
@@ -85,13 +88,21 @@ end
 class FakeRequest
   attr_accessor :handler, :request, :response
 
-  def initialize(path)
+  def initialize(path, options)
     self.handler = Handler.new
 
-    self.request = OpenStruct.new :params => {
+    params = {
       'HTTP_HOST' => 'test.host',
       'REQUEST_PATH' => path,
+      'REQUEST_METHOD' => options[:method].to_s.upcase,
     }
+
+    begin
+      params.merge! 'HTTP_SLUG' => options[:headers][:slug]
+    rescue NoMethodError
+    end
+
+    self.request = OpenStruct.new :params => params
     self.response = TestResponse.new
 
     handler.process request, response
@@ -107,9 +118,10 @@ class TestOutputter
 end
 
 class TestResponse < OpenStruct
-  attr_accessor :outputter
+  attr_accessor :outputter, :status
 
   def start(status)
+    self.status = status
     head = {}
     self.outputter = TestOutputter.new
     yield head, self.outputter

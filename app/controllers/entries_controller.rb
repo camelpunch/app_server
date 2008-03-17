@@ -5,6 +5,10 @@ class EntriesController < Controller
     Xml.open_container 'collections'
     render
   end
+
+  def create
+    response.status = 201
+  end
   
 end
 

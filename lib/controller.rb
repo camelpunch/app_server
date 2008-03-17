@@ -8,7 +8,7 @@ class Controller
   attr_accessor :response, :action_name, :hostname, :path
 
   def initialize
-    self.response = Response.new(:status => 200)
+    self.response = Response.new :status => 200
   end
 
   def template_path(content_type)

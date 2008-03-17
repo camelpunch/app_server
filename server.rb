@@ -10,18 +10,29 @@ require 'app/controllers/entries_controller'
 
 # instantiates a controller given a request object
 class Route
+  class UnrecognisedHTTPMethod < RuntimeError; end
+
   attr_accessor :controller
 
   def initialize(request)
     hostname = request.params['HTTP_HOST']
     path = request.params['REQUEST_PATH']
+    method = request.params['REQUEST_METHOD']
 
     if path == '/collections'
       self.controller = CollectionsController.new
       controller.action_name = 'index'
     elsif path.count('/') == 1
       self.controller = EntriesController.new
-      controller.action_name = 'index'
+
+      case method
+      when 'GET'
+        controller.action_name = 'index'
+      when 'POST'
+        controller.action_name = 'create'
+      else
+        raise UnrecognisedHTTPMethod, "Unrecognised method: #{method}"
+      end
     else
       puts path
       puts path.count('/')
@@ -38,9 +49,11 @@ class Handler < Mongrel::HttpHandler
   attr_accessor :route
 
   def process(request, response)
+    puts request.params.inspect
     self.route = Route.new request
 
-    response.start(self.route.controller.response.status) do |head, out|
+    response.start route.controller.response.status do |head, out|
+      puts route.controller.response.status
       # puts request.params.inspect
 
       body = <<XML
