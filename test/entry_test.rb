@@ -26,10 +26,12 @@ class EntryTest < Test::Unit::TestCase
 
   def test_find_transaction
     load_fixture :entries, '/blog/first_post'
+
+    block_works = false
     Entry.find '/blog/first_post' do |entry|
-      contents = File.read(File.join(File.dirname(__FILE__),
-                                     '/fixtures/blog/first_post'))
-      assert_equal contents, entry.document.get_content_as_string
+      block_works = true
     end
+
+    assert block_works
   end
 end

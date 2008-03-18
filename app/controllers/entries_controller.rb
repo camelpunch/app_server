@@ -9,11 +9,22 @@ class EntriesController < Controller
   end
 
   def create
-    entry = Entry.create :name => request.params['HTTP_SLUG'], 
-                         :content => '<adsf/>'
+    content = request.body.read
+
+    slug = request.params['HTTP_SLUG'] 
+    
+    entry = Entry.create :name => slug, :content => content
 
     response.status = 201
-    entry.document.get_content_as_string
+
+    location = [path, slug].join '/'
+
+    response.headers['Location'] = 
+      response.headers['Content-Location'] = location
+
+    response.headers["Content-Type"] = "application/atom+xml"
+
+    return entry.document.get_content_as_string
   end
   
 end

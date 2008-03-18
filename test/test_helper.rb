@@ -60,14 +60,17 @@ module ControllerTest
 
   def get(path)
     fake_request = FakeRequest.new path, :method => :get
-    @controller = fake_request.handler.route.controller
-    @body = @controller.response.body
+    process_request fake_request
   end
 
   def post(path, options = {})
     options.merge! :method => :post
     fake_request = FakeRequest.new path, options
-    @controller = fake_request
+    process_request fake_request
+  end
+
+  def process_request(fake_request)
+    @controller = fake_request.handler.route.controller
     @body = @controller.response.body
   end
 
@@ -86,7 +89,7 @@ module ControllerTest
 end
 
 class FakeRequest
-  attr_accessor :handler, :request, :response
+  attr_accessor :handler, :body, :request, :response
 
   def initialize(path, options)
     self.handler = Handler.new
@@ -102,7 +105,8 @@ class FakeRequest
     rescue NoMethodError
     end
 
-    self.request = OpenStruct.new :params => params
+    body = OpenStruct.new :read => options[:body]
+    self.request = OpenStruct.new :params => params, :body => body
     self.response = TestResponse.new
 
     handler.process request, response

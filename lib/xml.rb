@@ -131,8 +131,8 @@ class Xml
 
     container_transaction do |txn, container|
       context = manager.create_update_context
-      object.document.set_name(options[:name])
-      container.put_document(txn, object.document, context)
+      object.document.set_name options[:name]
+      container.put_document txn, object.document, context
     end
 
     object
@@ -150,6 +150,8 @@ class Xml
       rescue Java::XmlException
         raise NotFound, "Couldn't find #{self.class}: #{name}"
       end
+
+      yield object
     end
 
     object

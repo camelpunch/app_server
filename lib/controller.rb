@@ -9,7 +9,7 @@ class Controller
 
   def initialize(request)
     self.request = request
-    self.response = Response.new :status => 200
+    self.response = Response.new :status => 200, :headers => {}
   end
 
   def hostname
@@ -34,10 +34,12 @@ class Controller
       query_source = File.read template_path(:atom)
     end
 
-    Xml.query query_source, :variables => {
+    query_result = Xml.query query_source, :variables => {
       :path => path,
       :hostname => hostname,
     }
+
+    return '<?xml version="1.0" encoding="utf-8"?>' + "\n#{query_result}"
   end
 
 end

@@ -24,6 +24,7 @@ class EntriesControllerTest < Test::Unit::TestCase
 
   def test_post
     slug = 'a_name_for_my_post'
+
     begin
       Entry.destroy(slug)
     rescue
@@ -37,14 +38,22 @@ class EntriesControllerTest < Test::Unit::TestCase
 
     post '/blog', 
       :headers => { :slug => slug },
-      :content => fixture('requested_entries/somenewpost')
+      :body => fixture('requested_entries/somenewpost')
 
     assert_response 201
+    assert_not_nil @body, "body was nil"
 
     assert_equal num_entries + 1, Entry.count
 
+    assert_equal "application/atom+xml", 
+      @controller.response.headers['Content-Type']
+    assert_equal "/blog/#{slug}", 
+      @controller.response.headers['Location']
+    assert_equal "/blog/#{slug}", 
+      @controller.response.headers['Content-Location']
+
     Entry.find(slug) do |entry|
-      assert_equal entry.document.get_content_as_string, @body
+      assert @body.include?('<title>Some New Post</title>')
     end
   end
 end

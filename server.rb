@@ -47,18 +47,19 @@ class Handler < Mongrel::HttpHandler
   attr_accessor :route
 
   def process(request, response)
-    puts request.params.inspect
     self.route = Route.new request
 
-    response.start route.controller.response.status do |head, out|
-      puts route.controller.response.status
-      # puts request.params.inspect
+    controller = route.controller
 
-      body = <<XML
-<?xml version="1.0" encoding="utf-8"?>
-#{self.route.controller.response.body}
-XML
-      head["Content-Type"] = "application/atomserv+xml"
+    response.start controller.response.status do |head, out|
+      puts controller.response.status
+      puts request.params.inspect
+
+      body = controller.response.body
+
+      controller.response.headers.each do |name, value|
+        head[name] = value
+      end
       head["ETag"] = MD5.new body
 
       if request.params['HTTP_ACCEPT_ENCODING'] == 'gzip,deflate'
