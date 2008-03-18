@@ -1,3 +1,5 @@
+require 'entry'
+
 class EntriesController < Controller
 
   def index
@@ -7,9 +9,11 @@ class EntriesController < Controller
   end
 
   def create
+    entry = Entry.create :name => request.params['HTTP_SLUG'], 
+                         :content => '<adsf/>'
+
     response.status = 201
-    Entry.create :name => request.params['HTTP_SLUG'], 
-                 :content => '<adsf/>'
+    entry.document.get_content_as_string
   end
   
 end

@@ -30,23 +30,22 @@ class EntriesControllerTest < Test::Unit::TestCase
     end
 
     assert_raise Entry::NotFound do
-      Entry.find(slug)
+      Entry.find(slug) {}
     end
 
     num_entries = Entry.count
 
     post '/blog', 
-      :headers => {
-        :slug => slug,
-      },
+      :headers => { :slug => slug },
       :content => fixture('requested_entries/somenewpost')
 
     assert_response 201
 
     assert_equal num_entries + 1, Entry.count
 
-    assert Entry.find(slug)
+    Entry.find(slug) do |entry|
+      assert_equal entry.document.get_content_as_string, @body
+    end
   end
-
 end
 

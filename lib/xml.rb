@@ -54,8 +54,7 @@ class Xml
     txn = manager.create_transaction
 
     if use_container
-      container = 
-        manager.open_container txn, container_name, container_config
+      container = manager.open_container txn, container_name, container_config
       yield txn, container
     else
       yield txn
@@ -139,18 +138,21 @@ class Xml
     object
   end
 
-  def self.find(name)
+  def self.find(name, &block)
+    raise LocalJumpError unless block_given?
+
     object = new
     object.document = nil
 
     container_transaction do |txn, container|
-      object.document = container.get_document(txn, name)
+      begin
+        object.document = container.get_document txn, name
+      rescue Java::XmlException
+        raise NotFound, "Couldn't find #{self.class}: #{name}"
+      end
     end
 
     object
-
-  rescue Java::XmlException
-    raise NotFound, "Couldn't find #{self.class} #{name}"
   end
 
   # as above, returning nil in place of raising
