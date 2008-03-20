@@ -52,8 +52,8 @@ class Handler < Mongrel::HttpHandler
     controller = route.controller
 
     response.start controller.response.status do |head, out|
-      puts controller.response.status
-      puts request.params.inspect
+      #puts controller.response.status
+      #puts request.params.inspect
 
       body = controller.response.body
 
@@ -62,7 +62,9 @@ class Handler < Mongrel::HttpHandler
       end
       head["ETag"] = MD5.new body
 
-      if request.params['HTTP_ACCEPT_ENCODING'] == 'gzip,deflate'
+      accepted_encoding = request.params['HTTP_ACCEPT_ENCODING']
+
+      if accepted_encoding && accepted_encoding.include?('gzip')
         head["Content-Encoding"] = "deflate"
         out.write Zlib::Deflate.deflate(body)
       else
@@ -75,6 +77,8 @@ end
 if $0 == __FILE__
   h = Mongrel::HttpServer.new("0.0.0.0", 3000)
   h.register("/", Handler.new)
+  h.register("/public", 
+             Mongrel::DirHandler.new(File.join(Server.root, 'public')))
   puts "loaded"
   h.run.join
 end

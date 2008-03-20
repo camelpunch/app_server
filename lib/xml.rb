@@ -148,7 +148,7 @@ class Xml
       begin
         object.document = container.get_document txn, name
       rescue Java::XmlException
-        raise NotFound, "Couldn't find #{self.class}: #{name}"
+        raise NotFound, "Couldn't find #{name}"
       end
 
       yield object

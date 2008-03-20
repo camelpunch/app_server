@@ -39,7 +39,10 @@ class Controller
       :hostname => hostname,
     }
 
-    return '<?xml version="1.0" encoding="utf-8"?>' + "\n#{query_result}"
+    return <<XML
+<?xml version="1.0" encoding="utf-8"?>
+#{query_result}
+XML
   end
 
 end

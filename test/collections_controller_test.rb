@@ -11,6 +11,9 @@ class CollectionsControllerTest < Test::Unit::TestCase
     get '/collections'
     assert_response 200
 
+    assert_equal 'application/atomserv+xml', 
+      @controller.response.headers['Content-Type']
+
     assert @body.include?('Blog Entries'), 'no Blog Entries in body: ' + @body
 
     assert_valid :app, @body

@@ -4,9 +4,24 @@ class EntryTest < Test::Unit::TestCase
 
   def test_create
     name = '/blog/first_post'
-    load_fixture :entries, name
+    load_fixture :entries, name # does the destroy + creation
     Entry.find(name) do |entry|
       assert_equal name, entry.document.name
+      content = entry.document.get_content_as_string
+      assert content.include?(name), content
+    end
+  end
+
+  def test_create_with_existing_self_link
+    name = '/blog/first_post'
+    load_fixture :entries, name
+
+    Entry.find(name) do |entry|
+      content = entry.document.get_content_as_string
+
+      links = content.scan /<link .*rel="self".*/
+
+      assert_equal 1, links.size
     end
   end
 

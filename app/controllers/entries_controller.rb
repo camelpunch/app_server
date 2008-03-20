@@ -5,6 +5,9 @@ class EntriesController < Controller
   def index
     Xml.open_container 'entries'
     Xml.open_container 'collections'
+
+    response.headers["Content-Type"] = "application/atom+xml"
+
     render
   end
 
@@ -12,12 +15,11 @@ class EntriesController < Controller
     content = request.body.read
 
     slug = request.params['HTTP_SLUG'] 
+    location = [path, slug].join '/'
     
-    entry = Entry.create :name => slug, :content => content
+    entry = Entry.create :name => location, :content => content
 
     response.status = 201
-
-    location = [path, slug].join '/'
 
     response.headers['Location'] = 
       response.headers['Content-Location'] = location

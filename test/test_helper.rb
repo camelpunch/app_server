@@ -72,6 +72,7 @@ module ControllerTest
   def process_request(fake_request)
     @controller = fake_request.handler.route.controller
     @body = @controller.response.body
+    @headers = @controller.response.headers
   end
 
   def assert_response(code)
@@ -100,10 +101,7 @@ class FakeRequest
       'REQUEST_METHOD' => options[:method].to_s.upcase,
     }
 
-    begin
-      params.merge! 'HTTP_SLUG' => options[:headers][:slug]
-    rescue NoMethodError
-    end
+    params.merge! options[:headers] if options[:headers]
 
     body = OpenStruct.new :read => options[:body]
     self.request = OpenStruct.new :params => params, :body => body

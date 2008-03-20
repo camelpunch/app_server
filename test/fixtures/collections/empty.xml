@@ -1,0 +1,9 @@
+<collection 
+  xmlns="http://www.w3.org/2007/app" 
+  xmlns:atom="http://www.w3.org/2005/Atom"
+  href="/empty"
+>
+  <atom:title>No Entries</atom:title>
+  <accept>application/atom+xml;type=entry</accept>
+  <categories fixed="yes"/>
+</collection>

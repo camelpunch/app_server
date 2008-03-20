@@ -3,13 +3,24 @@ require File.dirname(__FILE__) + '/test_helper'
 class EntriesControllerTest < Test::Unit::TestCase
   include ControllerTest
 
-  def test_get
+  def setup
+    @slug = 'a_name_for_my_post'
+    begin
+      Entry.destroy @slug
+    rescue
+    end
+  end
+
+  def test_index
     load_fixture :collections, 'blog'
     load_fixture :entries, '/blog/first_post'
     load_fixture :entries, '/code/code_entry'
 
     get '/blog'
     assert_response 200
+
+    assert_equal 'application/atom+xml', 
+      @controller.response.headers['Content-Type']
 
     assert_equal '/blog', @controller.path
 
@@ -22,22 +33,29 @@ class EntriesControllerTest < Test::Unit::TestCase
     assert_valid :atom, @body
   end
 
+  def test_index_when_empty
+    load_fixture :collections, 'empty'
+
+    get '/empty'
+    assert_response 200
+
+    assert_include '<updated'
+
+    assert_valid :atom, @body
+  end
+
   def test_post
-    slug = 'a_name_for_my_post'
+    expected_location = "/blog/#{@slug}"
 
     begin
-      Entry.destroy(slug)
+      Entry.destroy expected_location
     rescue
-    end
-
-    assert_raise Entry::NotFound do
-      Entry.find(slug) {}
     end
 
     num_entries = Entry.count
 
     post '/blog', 
-      :headers => { :slug => slug },
+      :headers => { 'HTTP_SLUG' => @slug },
       :body => fixture('requested_entries/somenewpost')
 
     assert_response 201
@@ -45,16 +63,16 @@ class EntriesControllerTest < Test::Unit::TestCase
 
     assert_equal num_entries + 1, Entry.count
 
-    assert_equal "application/atom+xml", 
-      @controller.response.headers['Content-Type']
-    assert_equal "/blog/#{slug}", 
-      @controller.response.headers['Location']
-    assert_equal "/blog/#{slug}", 
-      @controller.response.headers['Content-Location']
+    assert_equal "application/atom+xml", @headers['Content-Type']
 
-    Entry.find(slug) do |entry|
-      assert @body.include?('<title>Some New Post</title>')
-    end
+    assert_equal expected_location, @headers['Location']
+    assert_equal expected_location, @headers['Content-Location']
+    assert_include "<link rel=\"self\" href=\"#{expected_location}\"/>"
+
+    Entry.find(expected_location) {|entry| assert entry.kind_of?(Entry)}
+
+    assert_include '<title>Some New Post</title>'
+    assert_include expected_location
   end
 end
 
