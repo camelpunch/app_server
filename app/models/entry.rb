@@ -11,7 +11,7 @@ class Entry < Xml
 
     if self_links.size == 0
       content.gsub! /<\/entry>/, <<FRAGMENT
-  <link rel="self" href="#{options[:name]}"/>
+<link rel="self" href="#{options[:name]}"/>
 </entry>
 FRAGMENT
     end

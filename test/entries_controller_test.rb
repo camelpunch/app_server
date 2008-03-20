@@ -44,6 +44,16 @@ class EntriesControllerTest < Test::Unit::TestCase
     assert_valid :atom, @body
   end
 
+  def test_show
+    load_fixture :collections, 'blog'
+    load_fixture :entries, '/blog/first_post'
+
+    get '/blog/first_post'
+    assert_response 200
+
+    assert_include '<title>first post'
+  end
+
   def test_post
     expected_location = "/blog/#{@slug}"
 

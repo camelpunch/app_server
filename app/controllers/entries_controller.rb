@@ -28,6 +28,12 @@ class EntriesController < Controller
 
     return entry.document.get_content_as_string
   end
+
+  def show
+    Entry.find(path) do |entry|
+      return entry.document.get_content_as_string
+    end
+  end
   
 end
 

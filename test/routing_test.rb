@@ -13,7 +13,7 @@ class RoutingTest < Test::Unit::TestCase
     assert_equal expected_controller, 
       fake_request.handler.route.controller.class
 
-    assert_equal expected_action_name.to_s, 
+    assert_equal expected_action_name,
       fake_request.handler.route.controller.action_name
   end
 
@@ -24,7 +24,8 @@ class RoutingTest < Test::Unit::TestCase
   end
 
   def test_blog_route
-    assert_route '/', 
+    load_fixture :collections, 'blog'
+    assert_route '/blog', 
       :controller => EntriesController, 
       :action => :index
   end
