@@ -28,7 +28,22 @@ class EntryTest < Test::Unit::TestCase
   def test_create_adds_updated
     load_fixture :entries, 'with_ns', :dir => :requested_entries
     Entry.find 'with_ns' do |entry|
-      assert entry.document.get_content_as_string.include?('<atom:updated')
+      content = entry.document.get_content_as_string
+      assert content.include?('<atom:updated')
+    end
+  end
+
+  def test_create_updates_updated
+    load_fixture :entries, 'with_ns_and_updated', :dir => :requested_entries
+    Entry.find 'with_ns_and_updated' do |entry|
+      content = entry.document.get_content_as_string
+
+      updated_elements = content.scan /<atom:updated/
+
+      assert_equal 1, updated_elements.size
+
+      assert ! content.
+        include?('<atom:updated>2008-03-21T14:24:13.116Z</atom:updated>')
     end
   end
 

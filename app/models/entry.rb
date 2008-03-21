@@ -1,48 +1,42 @@
 require 'lib/xml'
-import java.io.FileOutputStream
-import javax.xml.transform.stream.StreamSource
-import javax.xml.transform.TransformerFactory
-
 class Entry < Xml
+
+  import java.io.FileOutputStream
+  import javax.xml.transform.stream.StreamSource
+  import javax.xml.transform.TransformerFactory
+  import javax.xml.transform.stream.StreamResult
+  import java.lang.System
+
   self.container_name = 'entries'
 
   def self.create(options)
-    # pass to xslt processor to do necessary transformations before saving
+
+    # use saxon for XSLT 2 support
+    System.set_property("javax.xml.transform.TransformerFactory",
+                        "net.sf.saxon.TransformerFactoryImpl")
+
+    # pass to xslt processor to do transformations before saving
     content = options[:content]
 
     stylesheet_path = 
       File.join(Server.root, 'app', 'stylesheets', 'create_entry.xsl')
-
-    puts stylesheet_path
 
     reader = StringReader.new(content)
     document = StreamSource.new(reader) 
     stylesheet = StreamSource.new(stylesheet_path)
     output = StringWriter.new
 
-    result = javax.xml.transform.stream.StreamResult.new output
+    result = StreamResult.new output
 
-    transformer = TransformerFactory.newInstance.newTransformer(stylesheet)
+    transformer = TransformerFactory.new_instance.new_transformer(stylesheet)
+    transformer.set_parameter('name', options[:name])
     transformer.transform(document, result)
 
-=begin
-    self_links = content.scan /<.*link .*rel="self".*/
-
-    if self_links.size == 0
-      content.gsub! /<\/entry>/, <<FRAGMENT
-<link rel="self" href="#{options[:name]}"/>
-</entry>
-FRAGMENT
-
-      content.gsub! /<\/atom:entry>/, <<FRAGMENT
-<atom:link rel="self" href="#{options[:name]}"/>
-</atom:entry>
-FRAGMENT
-    end
-=end
-
-    options.merge! :content => output
+    options.merge! :content => output.to_s
 
     super options
+
+  rescue java.lang.Exception => e
+    puts e
   end
 end

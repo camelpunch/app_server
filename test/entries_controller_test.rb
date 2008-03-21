@@ -51,7 +51,7 @@ class EntriesControllerTest < Test::Unit::TestCase
     get '/blog/first_post'
     assert_response 200
 
-    assert_include '<title>first post'
+    assert_include 'first post</title>'
   end
 
   def test_create_with_slug
@@ -64,8 +64,7 @@ class EntriesControllerTest < Test::Unit::TestCase
 
   def test_create_without_slug
     assert_posts(:expected_location => '/blog/some_new_post') do
-      post '/blog', 
-        :body => fixture('requested_entries/somenewpost')
+      post '/blog', :body => fixture('requested_entries/somenewpost')
     end
   end
 
