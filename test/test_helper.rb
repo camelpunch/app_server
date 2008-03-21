@@ -25,13 +25,15 @@ class Test::Unit::TestCase
     File.read path
   end
 
-  def load_fixture(container, name)
+  def load_fixture(container, name, options = {})
     klass = Kernel.const_get(container.to_s.singularize.classify)
     klass.destroy name.to_s
 
     filename = name.split('/').last
 
-    content = fixture "#{container}/#{filename}"
+    dir = options[:dir] || container
+
+    content = fixture "#{dir}/#{filename}"
     klass.create :name => name, :content => content
   end
 

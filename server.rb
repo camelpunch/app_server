@@ -45,13 +45,13 @@ class Route
 
   # call the action and store the return value in response.body
   def process!
-    puts "----------request--------------\n#{controller.request.inspect}"
-    puts controller.request.body.read
-    controller.request.body.rewind
+    #puts "----------request--------------\n#{controller.request.inspect}"
+    #puts controller.request.body.read
+    #controller.request.body.rewind
 
     controller.response.body = controller.send(controller.action_name)
 
-    puts "----------response--------------\n#{controller.response.inspect}"
+    #puts "----------response--------------\n#{controller.response.inspect}"
   end
 
 end

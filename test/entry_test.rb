@@ -25,6 +25,13 @@ class EntryTest < Test::Unit::TestCase
     end
   end
 
+  def test_create_adds_updated
+    load_fixture :entries, 'with_ns', :dir => :requested_entries
+    Entry.find 'with_ns' do |entry|
+      assert entry.document.get_content_as_string.include?('<atom:updated')
+    end
+  end
+
   def test_count
     name = '/blog/first_post'
     Entry.destroy name

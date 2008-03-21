@@ -16,6 +16,7 @@ return
 <feed>
 <id>http://{$hostname}/</id>
 <title type="text">{$collection/title/text()}</title>
+<author><name>Andrew Bruce</name></author>
 
 {
 if ($entries[1]) then $entries[1]/updated
