@@ -38,9 +38,11 @@ class EntriesController < Controller
   end
 
   def show
+    content = ''
     Entry.find(path) do |entry|
-      return entry.document.get_content_as_string
+      content = entry.document.get_content_as_string
     end
+    return content
   end
   
 end

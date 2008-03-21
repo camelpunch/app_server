@@ -19,7 +19,7 @@ class EntryTest < Test::Unit::TestCase
     Entry.find(name) do |entry|
       content = entry.document.get_content_as_string
 
-      links = content.scan /<link .*rel="self".*/
+      links = content.scan(/rel="self"/)
 
       assert_equal 1, links.size
     end
@@ -38,7 +38,7 @@ class EntryTest < Test::Unit::TestCase
     Entry.find 'with_ns_and_updated' do |entry|
       content = entry.document.get_content_as_string
 
-      updated_elements = content.scan /<atom:updated/
+      updated_elements = content.scan(/<atom:updated/)
 
       assert_equal 1, updated_elements.size
 

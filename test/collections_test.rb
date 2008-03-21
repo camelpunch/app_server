@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class CollectionTest < Test::Unit::TestCase
+class CollectionsTest < Test::Unit::TestCase
 
   def test_names
     load_fixture :collections, 'blog'
