@@ -6,6 +6,8 @@ class Entry < Xml
   import javax.xml.transform.TransformerFactory
   import javax.xml.transform.stream.StreamResult
   import java.lang.System
+  import java.io.StringReader
+  import java.io.StringWriter
 
   self.container_name = 'entries'
 
