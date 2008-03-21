@@ -7,6 +7,7 @@ task :default => :tests
 
 Rake::TestTask.new("tests") do |t|
   t.pattern = "test/*_test.rb"
+  t.verbose = true
 end
 
 task :clear_database do

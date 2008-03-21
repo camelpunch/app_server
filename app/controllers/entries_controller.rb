@@ -15,7 +15,15 @@ class EntriesController < Controller
     content = request.body.read
 
     slug = request.params['HTTP_SLUG'] 
-    location = [path, slug].join '/'
+
+    if slug
+      name = slug
+    else
+      content =~ /<.*title>(.*)<\/.*title>/
+      name = $1.gsub(/[^(a-zA-Z0-9)]+/, '_').downcase
+    end
+
+    location = [path, name].join '/'
     
     entry = Entry.create :name => location, :content => content
 

@@ -4,9 +4,9 @@ class EntriesControllerTest < Test::Unit::TestCase
   include ControllerTest
 
   def setup
-    @slug = 'a_name_for_my_post'
+    @new_name = 'a_name_for_my_post'
     begin
-      Entry.destroy @slug
+      Entry.destroy @new_name
     rescue
     end
   end
@@ -54,8 +54,32 @@ class EntriesControllerTest < Test::Unit::TestCase
     assert_include '<title>first post'
   end
 
-  def test_post
-    expected_location = "/blog/#{@slug}"
+  def test_create_with_slug
+    assert_posts do
+      post '/blog', 
+        :headers => { 'HTTP_SLUG' => @new_name },
+        :body => fixture('requested_entries/somenewpost')
+    end
+  end
+
+  def test_create_without_slug
+    assert_posts(:expected_location => '/blog/some_new_post') do
+      post '/blog', 
+        :body => fixture('requested_entries/somenewpost')
+    end
+  end
+
+  def test_create_with_explicit_namespaces
+    assert_posts(:expected_location => '/blog/with_ns') do
+      post '/blog',
+        :body => fixture('requested_entries/with_ns')
+    end
+  end
+
+  protected
+
+  def assert_posts(options = {})
+    expected_location = options[:expected_location] || "/blog/#{@new_name}"
 
     begin
       Entry.destroy expected_location
@@ -64,9 +88,7 @@ class EntriesControllerTest < Test::Unit::TestCase
 
     num_entries = Entry.count
 
-    post '/blog', 
-      :headers => { 'HTTP_SLUG' => @slug },
-      :body => fixture('requested_entries/somenewpost')
+    yield
 
     assert_response 201
     assert_not_nil @body, "body was nil"
@@ -77,12 +99,12 @@ class EntriesControllerTest < Test::Unit::TestCase
 
     assert_equal expected_location, @headers['Location']
     assert_equal expected_location, @headers['Content-Location']
-    assert_include "<link rel=\"self\" href=\"#{expected_location}\"/>"
+    assert_include "link rel=\"self\" href=\"#{expected_location}\"/>"
 
     Entry.find(expected_location) {|entry| assert entry.kind_of?(Entry)}
 
-    assert_include '<title>Some New Post</title>'
     assert_include expected_location
   end
+
 end
 

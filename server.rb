@@ -30,30 +30,28 @@ class Route
 
       self.controller = EntriesController.new request
 
-      if path =~ /\/.*\/(.*)/
+      if path =~ /\/.*\/.*/
         controller.action_name = :show
-        return true
       else
-        Collection.names.each do |name|
-          if path == "/#{name}"
-            case method
-            when 'GET'
-              controller.action_name = :index
-              return true
-            when 'POST'
-              controller.action_name = :create
-              return true
-            end
-          end
+        case method
+        when 'GET'
+          controller.action_name = :index
+        when 'POST'
+          controller.action_name = :create
         end
       end
-
     end
   end
 
   # call the action and store the return value in response.body
   def process!
+    puts "----------request--------------\n#{controller.request.inspect}"
+    puts controller.request.body.read
+    controller.request.body.rewind
+
     controller.response.body = controller.send(controller.action_name)
+
+    puts "----------response--------------\n#{controller.response.inspect}"
   end
 
 end
@@ -63,13 +61,13 @@ class Handler < Mongrel::HttpHandler
 
   def process(request, response)
     self.route = Route.new request
+    route.process!
 
     controller = route.controller
 
     response.start controller.response.status do |head, out|
       #puts controller.response.status
       #puts request.params.inspect
-      route.process!
 
       body = controller.response.body
 

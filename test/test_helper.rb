@@ -18,6 +18,7 @@ include_class com.thaiopensource.util.PropertyMapBuilder
 include_class com.thaiopensource.validate.ValidateProperty
 
 class Test::Unit::TestCase
+
   def fixture(simple_path)
     dir, name = simple_path.split '/'
     path = File.join(Server.root, 'test', 'fixtures', dir, "#{name}.xml")
