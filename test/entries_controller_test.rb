@@ -75,6 +75,10 @@ class EntriesControllerTest < Test::Unit::TestCase
     end
   end
 
+  def test_create_with_blank_title
+    flunk
+  end
+
   protected
 
   def assert_posts(options = {})
