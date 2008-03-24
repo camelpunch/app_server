@@ -76,19 +76,33 @@ class EntriesControllerTest < Test::Unit::TestCase
   end
 
   def test_create_with_blank_title
-    flunk
+    name = '/blog/blank_title'
+    safely_destroy_entry name
+
+    num_entries = Entry.count
+
+    post '/blog',
+      :body => fixture('requested_entries/blank_title')
+
+    assert_response 400
+
+    assert_equal num_entries, Entry.count
   end
 
   protected
 
+  def safely_destroy_entry(name)
+    begin
+      Entry.destroy name
+    rescue
+    end
+  end
+
   def assert_posts(options = {})
     expected_location = options[:expected_location] || "/blog/#{@new_name}"
 
-    begin
-      Entry.destroy expected_location
-    rescue
-    end
-
+    safely_destroy_entry(expected_location)
+    
     num_entries = Entry.count
 
     yield

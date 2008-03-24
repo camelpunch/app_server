@@ -20,7 +20,14 @@ class EntriesController < Controller
       name = slug
     else
       content =~ /<.*title>(.*)<\/.*title>/
-      name = $1.gsub(/[^(a-zA-Z0-9)]+/, '_').downcase
+
+      if $1
+        name = $1.gsub(/[^(a-zA-Z0-9)]+/, '_').downcase
+      else
+        response.status = 400
+        response.headers["Content-Type"] = "text/plain"
+        return "No title provided"
+      end
     end
 
     location = [path, name].join '/'
