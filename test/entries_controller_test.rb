@@ -31,6 +31,8 @@ class EntriesControllerTest < Test::Unit::TestCase
     assert_include "http://test.host#{@controller.path}"
 
     assert_valid :atom, @body
+
+    assert_not_include 'atom:'
   end
 
   def test_index_when_empty

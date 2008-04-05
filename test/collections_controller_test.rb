@@ -4,9 +4,9 @@ class CollectionsControllerTest < Test::Unit::TestCase
   include ControllerTest
   
   def test_get
-    Collection.destroy('blog')
+    Collection.destroy 'blog'
     content = fixture 'collections/blog'
-    Collection.create(:name => 'blog', :content => content)
+    Collection.create :name => 'blog', :content => content
 
     get '/collections'
     assert_response 200
@@ -14,7 +14,7 @@ class CollectionsControllerTest < Test::Unit::TestCase
     assert_equal 'application/atomserv+xml', 
       @controller.response.headers['Content-Type']
 
-    assert @body.include?('Blog Entries'), 'no Blog Entries in body: ' + @body
+    assert @body.include?('Blog Entries'), 'no "Blog Entries" in body: ' + @body
 
     assert_valid :app, @body
   end

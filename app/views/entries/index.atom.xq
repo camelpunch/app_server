@@ -1,4 +1,5 @@
 declare default element namespace "http://www.w3.org/2005/Atom";
+declare namespace atom = "http://www.w3.org/2005/Atom";
 declare namespace app = "http://www.w3.org/2007/app";
 
 let $collection := collection('dbxml:collections')/app:collection[@href=$path]
